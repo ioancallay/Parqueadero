@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Parqueadero</string>
+    <string name="lblLogin">APP Parking</string>
+    <string name="btnIngresar">Iniciar Sesion</string>
+    <string name="txtUsuario">Usuario</string>
+    <string name="txtPassword">Contraseña</string>
+    <string name="lblTitulo">Vehículos</string>
+    <string name="lblCedula">Cedula</string>
+    <string name="lblNombre">Nombre</string>
+    <string name="lblPlaca">Num Placa</string>
+    <string name="lblEntrada">Hora Entrada</string>
+    <string name="lblSalida">Hora Salida</string>
+    <string name="lblValor">Valor a pagar</string>
+    <string name="btnGuardar">Guardar</string>
+    <string name="btnSalida">Salida</string>
+    <string name="btnEliminar">Eliminar</string>
+    <string name="btnCancelar">Cancelar</string>
+    <string name="btnNuevo">Nuevo</string>
+    <string name="lblTitulo2">Vehículos registrados</string>
 </resources>
