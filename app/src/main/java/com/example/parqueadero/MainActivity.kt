@@ -130,6 +130,8 @@ class MainActivity : AppCompatActivity() {
                         form2.putExtras(bundle)
                         startActivity(form2)
                     } else {
+                        Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_SHORT).show()
+
                         loginAttempts++
                         if (loginAttempts >= 3) {
                             Toast.makeText(applicationContext, "Demasiados intentos fallidos. Intenta más tarde.", Toast.LENGTH_SHORT).show()
@@ -150,8 +152,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bloquearLogin() {
+        Toast.makeText(applicationContext, "Demasiados intentos fallidos. Intenta más tarde.", Toast.LENGTH_SHORT).show()
         val loginButton: Button = findViewById(R.id.btn_ingresar)
         loginButton.isEnabled = false
+
+
 
         Handler(Looper.getMainLooper()).postDelayed({
             loginAttempts = 0
