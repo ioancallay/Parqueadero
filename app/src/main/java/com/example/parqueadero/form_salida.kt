@@ -65,7 +65,9 @@ class form_salida : AppCompatActivity() {
         pagosDesactivar()
         editar(cod_carro)
 
-        btnPayPago.setOnClickListener {  }
+        btnPayPago.setOnClickListener {
+            pagar(cod_carro)
+        }
 
         btnPayCancelar.setOnClickListener {
             val form_registrar = Intent(this, form_registrar::class.java)
@@ -100,7 +102,7 @@ class form_salida : AppCompatActivity() {
     private fun editar(cod_carro:String){
         txtPayCodCarro.setText(cod_carro)
         val campos = JSONObject()
-        campos.put("accion", "pagar")
+        campos.put("accion", "generarPago")
         campos.put("cod_carro", cod_carro)
         val rq = Volley.newRequestQueue(this)
         val jsoresp = JsonObjectRequest(
@@ -129,6 +131,34 @@ class form_salida : AppCompatActivity() {
                 }
             },
             { volleyError-> Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_LONG).show() })
+        rq.add(jsoresp)
+    }
+
+    private fun pagar(cod_contacto: String){
+        val campos = JSONObject()
+        campos.put("accion", "pagar")
+        campos.put("cod_carro", cod_contacto)
+        campos.put("valor_pago", txtPayValor.text.toString())
+        campos.put("numero_horas", txtPayHoras.text.toString())
+        campos.put("estado_carro", "Pagado")
+
+        val rq = Volley.newRequestQueue(this)
+        val jsoresp = JsonObjectRequest(Request.Method.POST, apis, campos, {
+                s->
+            try {
+                val obj = (s)
+                if (obj.getBoolean("estado")){
+                    Toast.makeText(applicationContext, obj.getString("response"), Toast.LENGTH_SHORT).show()
+                    val form_registrar = Intent(this, form_registrar::class.java)
+                    startActivity(form_registrar)
+                } else{
+                    Toast.makeText(applicationContext, obj.getString("response"), Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: JSONException){
+                Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
+            }
+        },
+            {volleyError-> Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_SHORT).show()})
         rq.add(jsoresp)
     }
 }

@@ -19,4 +19,5 @@
     <string name="lblTitulo2">Vehículos registrados</string>
     <string name="lblPagar">Marcar salida</string>
     <string name="lblHoras">No. horas</string>
+    <string name="btnSalida">Salida</string>
 </resources>

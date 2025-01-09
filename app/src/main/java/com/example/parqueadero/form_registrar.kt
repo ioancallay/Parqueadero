@@ -171,13 +171,13 @@ class form_registrar : AppCompatActivity() {
         btnNuevo.isVisible = false
         btnGuardar.isVisible = false
         btnPagar.isVisible = true
-        btnEliminar.isVisible = true
+        btnEliminar.isVisible = false
         btnCancelar.isVisible = true
 
         btnNuevo.isEnabled = false
         btnGuardar.isEnabled = false
         btnPagar.isEnabled = true
-        btnEliminar.isEnabled = true
+        btnEliminar.isEnabled = false
         btnCancelar.isEnabled = true
 
         txtSalida.isVisible = true
@@ -227,7 +227,7 @@ class form_registrar : AppCompatActivity() {
                                         + "\n" + fila.getString("nombre_carro") + " " + fila.getString("cedula_carro")
                                         + "\nHora entrada: " + fila.getString("hora_entrada")
                                         + "\nHora salida: " + horaSalida
-                                        + "\nValor: " + pago
+                                        + "\nValor: $ " + pago
                                         + "\nEstado: " + fila.getString("estado_carro")
                             )
                             codigos_carros.add(fila.getString("cod_carro"))

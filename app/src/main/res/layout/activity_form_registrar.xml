@@ -214,14 +214,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/btnPago" />
+                android:text="@string/btnSalida" />
 
             <Button
                 android:id="@+id/btn_eliminar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/btnEliminar" />
+                android:text="@string/btnEliminar"
+                android:visibility="invisible" />
 
             <Button
                 android:id="@+id/btn_cancelar"

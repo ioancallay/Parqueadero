@@ -14,6 +14,9 @@ import org.json.JSONObject
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.android.volley.Request
+import android.os.Handler
+import android.os.Looper
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         txtUsuario.setText("")
         txtPassword.setText("")
     }
-
+/*
     private fun login(email: String, passwd:String){
         val campos = JSONObject()
         campos.put("accion", "login")
@@ -96,4 +99,64 @@ class MainActivity : AppCompatActivity() {
             { volleyError-> Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_LONG).show() })
         rq.add(jsoresp)
     }
+
+ */
+
+    private var loginAttempts = 0
+
+    private fun login(email: String, passwd: String) {
+        val campos = JSONObject()
+        campos.put("accion", "login")
+        campos.put("email", email)
+        campos.put("password", passwd)
+        val rq = Volley.newRequestQueue(this)
+        val jsoresp = JsonObjectRequest(Request.Method.POST, apis, campos,
+            { response ->
+                try {
+                    val obj = response
+                    if (obj.getBoolean("estado")) {
+                        loginAttempts = 0
+
+                        val array = obj.getJSONArray("data")
+                        val dato = array.getJSONObject(0)
+                        val cod_persona = dato.getString("cod_usuario")
+                        val fullname = dato.getString("nom_usuario") + " " + dato.getString("ape_usuario")
+                        Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_SHORT).show()
+
+                        val form2 = Intent(this, form_registrar::class.java)
+                        val bundle = Bundle()
+                        bundle.putString("cod_usuario", cod_persona)
+                        bundle.putString("fullname", fullname)
+                        form2.putExtras(bundle)
+                        startActivity(form2)
+                    } else {
+                        loginAttempts++
+                        if (loginAttempts >= 3) {
+                            Toast.makeText(applicationContext, "Demasiados intentos fallidos. Intenta más tarde.", Toast.LENGTH_SHORT).show()
+                            bloquearLogin()
+                        } else {
+                            Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_SHORT).show()
+                            limpiarCajas()
+                        }
+                    }
+                } catch (e: JSONException) {
+                    Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
+                }
+            },
+            { volleyError ->
+                Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_LONG).show()
+            })
+        rq.add(jsoresp)
+    }
+
+    private fun bloquearLogin() {
+        val loginButton: Button = findViewById(R.id.btn_ingresar)
+        loginButton.isEnabled = false
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            loginAttempts = 0
+            loginButton.isEnabled = true
+        }, 30000)
+    }
+
 }
