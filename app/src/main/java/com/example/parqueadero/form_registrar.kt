@@ -78,6 +78,10 @@ class form_registrar : AppCompatActivity() {
             activarPago()
         }
 
+        txtCedula.setOnFocusChangeListener { view, b ->
+            verificar_cedula(txtCedula.text.toString())
+        }
+
         btnGuardar.setOnClickListener {
             when{
                 txtCedula.text.isEmpty()->{
@@ -322,6 +326,28 @@ class form_registrar : AppCompatActivity() {
                 }
             },
             { volleyError-> Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_SHORT).show() })
+        rq.add(jsoresp)
+    }
+
+    private fun verificar_cedula(cedula:String){
+        val campos = JSONObject()
+        campos.put("accion", "verificar_cedula")
+        campos.put("cedula_carro", cedula)
+        val rq = Volley.newRequestQueue(this)
+        val jsoresp = JsonObjectRequest(Request.Method.POST, apis, campos,
+            {
+                    s->
+                try {
+                    val obj = (s)
+                    if(obj.getBoolean("estado")){
+                        Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_LONG).show()
+                        limpiarCajas()
+                    }
+                } catch (e: JSONException){
+                    Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_LONG).show()
+                }
+            },
+            { volleyError-> Toast.makeText(applicationContext, volleyError.message, Toast.LENGTH_LONG).show() })
         rq.add(jsoresp)
     }
 }
