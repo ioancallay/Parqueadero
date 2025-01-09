@@ -12,9 +12,11 @@
     <string name="lblSalida">Hora Salida</string>
     <string name="lblValor">Valor a pagar</string>
     <string name="btnGuardar">Guardar</string>
-    <string name="btnSalida">Salida</string>
+    <string name="btnPago">Pagar</string>
     <string name="btnEliminar">Eliminar</string>
     <string name="btnCancelar">Cancelar</string>
     <string name="btnNuevo">Nuevo</string>
     <string name="lblTitulo2">Vehículos registrados</string>
+    <string name="lblPagar">Marcar salida</string>
+    <string name="lblHoras">No. horas</string>
 </resources>

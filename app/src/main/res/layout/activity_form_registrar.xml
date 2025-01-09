@@ -210,11 +210,11 @@
                 android:text="@string/btnGuardar" />
 
             <Button
-                android:id="@+id/btn_salida"
+                android:id="@+id/btn_pagar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/btnSalida" />
+                android:text="@string/btnPago" />
 
             <Button
                 android:id="@+id/btn_eliminar"

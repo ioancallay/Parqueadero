@@ -1,5 +1,6 @@
 package com.example.parqueadero
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -16,7 +17,6 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import com.android.volley.Request
 import org.json.JSONException
-import com.android.volley.Response
 
 class form_registrar : AppCompatActivity() {
 
@@ -30,7 +30,7 @@ class form_registrar : AppCompatActivity() {
     lateinit var txtCodUsuario: EditText
     lateinit var btnNuevo: Button
     lateinit var btnGuardar: Button
-    lateinit var btnSalida: Button
+    lateinit var btnPagar: Button
     lateinit var btnEliminar: Button
     lateinit var btnCancelar: Button
     lateinit var listarCarros: ListView
@@ -64,17 +64,19 @@ class form_registrar : AppCompatActivity() {
             limpiarCajas()
         }
 
-        btnSalida.setOnClickListener {
-            desactivarCajas()
-            desactivarBotones()
-            limpiarCajas()
-        }
-/*
-        listarCarros.setOnItemClickListener { adapterView, view, i, l ->
-            Toast.makeText(applicationContext, codigos_carros[i], Toast.LENGTH_LONG).show()
+        btnPagar.setOnClickListener {
+            val form_pago = Intent(this, form_salida::class.java)
+            val bundle = Bundle()
+            bundle.putString("cod_carro", txtCodCarro.text.toString())
+            form_pago.putExtras(bundle)
+            startActivity(form_pago)
         }
 
- */
+        listarCarros.setOnItemClickListener { adapterView, view, i, l ->
+            Toast.makeText(applicationContext, codigos_carros[i], Toast.LENGTH_LONG).show()
+            editar(codigos_carros[i])
+            activarPago()
+        }
 
         btnGuardar.setOnClickListener {
             when{
@@ -108,21 +110,22 @@ class form_registrar : AppCompatActivity() {
         txtValor = findViewById(R.id.txt_valor)
         btnNuevo = findViewById(R.id.btn_nuevo)
         btnGuardar = findViewById(R.id.btn_guardar)
-        btnSalida = findViewById(R.id.btn_salida)
+        btnPagar = findViewById(R.id.btn_pagar)
         btnEliminar = findViewById(R.id.btn_eliminar)
         btnCancelar = findViewById(R.id.btn_cancelar)
+        listarCarros = findViewById(R.id.list_carros)
     }
 
     fun nuevoIngreso(){
         btnNuevo.isEnabled = false
         btnGuardar.isEnabled = true
-        btnSalida.isEnabled = false
+        btnPagar.isEnabled = false
         btnEliminar.isEnabled = false
         btnCancelar.isEnabled = true
 
         btnNuevo.isVisible = false
         btnGuardar.isVisible = true
-        btnSalida.isVisible = false
+        btnPagar.isVisible = false
         btnEliminar.isVisible = false
         btnCancelar.isVisible = true
 
@@ -131,13 +134,13 @@ class form_registrar : AppCompatActivity() {
     fun desactivarBotones(){
         btnNuevo.isEnabled = true
         btnGuardar.isEnabled = false
-        btnSalida.isEnabled = false
+        btnPagar.isEnabled = false
         btnEliminar.isEnabled = false
         btnCancelar.isEnabled = false
 
         btnNuevo.isVisible = true
         btnGuardar.isVisible = false
-        btnSalida.isVisible = false
+        btnPagar.isVisible = false
         btnEliminar.isVisible = false
         btnCancelar.isVisible = false
     }
@@ -148,6 +151,10 @@ class form_registrar : AppCompatActivity() {
         txtPlaca.isEnabled = true
         txtEntrada.isEnabled = true
         txtSalida.isEnabled = true
+        txtSalida.isEnabled = false
+        txtValor.isEnabled = false
+        txtSalida.isVisible = false
+        txtValor.isVisible = false
     }
 
     fun desactivarCajas(){
@@ -156,20 +163,25 @@ class form_registrar : AppCompatActivity() {
         txtPlaca.isEnabled = false
         txtEntrada.isEnabled = false
         txtSalida.isEnabled = false
+        txtSalida.isEnabled = false
+        txtValor.isEnabled = false
     }
 
-    fun salidaBotones(){
+    fun activarPago(){
         btnNuevo.isVisible = false
         btnGuardar.isVisible = false
-        btnSalida.isVisible = true
+        btnPagar.isVisible = true
         btnEliminar.isVisible = true
         btnCancelar.isVisible = true
 
         btnNuevo.isEnabled = false
         btnGuardar.isEnabled = false
-        btnSalida.isEnabled = true
+        btnPagar.isEnabled = true
         btnEliminar.isEnabled = true
         btnCancelar.isEnabled = true
+
+        txtSalida.isVisible = true
+        txtValor.isVisible = true
     }
 
     fun limpiarCajas(){
@@ -177,8 +189,10 @@ class form_registrar : AppCompatActivity() {
         txtNombre.setText("")
         txtPlaca.setText("")
         txtEntrada.setText("")
+        txtSalida.setText("")
+        txtValor.setText("")
     }
-/*
+
     private fun todos(){
         codigos_carros.clear()
 
@@ -195,10 +209,30 @@ class form_registrar : AppCompatActivity() {
                         val array = obj.getJSONArray("data")
                         for(i in 0..<array.length()){
                             val fila = array.getJSONObject(i)
-                            intrapersonal.add(fila.getString("placa_carro"))
+                            val horaSalida = if (fila.isNull("hora_salida")) {
+                                "Sin hora de salida"
+                            } else {
+                                fila.getString("hora_salida")
+                            }
+
+                            val pago = if(fila.isNull("valor_pago")){
+                                "0"
+                            } else{
+                                fila.getString("valor_pago")
+                            }
+
+                            intrapersonal.add(
+
+                                fila.getString("placa_carro")
+                                        + "\n" + fila.getString("nombre_carro") + " " + fila.getString("cedula_carro")
+                                        + "\nHora entrada: " + fila.getString("hora_entrada")
+                                        + "\nHora salida: " + horaSalida
+                                        + "\nValor: " + pago
+                                        + "\nEstado: " + fila.getString("estado_carro")
+                            )
                             codigos_carros.add(fila.getString("cod_carro"))
                         }
-                        val adapterList = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, intrapersonal)
+                        val adapterList = ArrayAdapter(this, android.R.layout.simple_list_item_1, intrapersonal)
                         listarCarros.adapter = adapterList
                         adapterList.notifyDataSetChanged()
                     }
@@ -214,54 +248,6 @@ class form_registrar : AppCompatActivity() {
         rq.add(jsoresp)
     }
 
- */
-
-
-
-private fun todos() {
-    codigos_carros.clear()
-
-    val intrapersonal = ArrayList<String>()
-    val campos = JSONObject()
-
-    try {
-        campos.put("accion", "todos")
-    } catch (e: JSONException) {
-        Toast.makeText(this, "Error al crear el objeto JSON", Toast.LENGTH_SHORT).show()
-        return
-    }
-
-    val rq = Volley.newRequestQueue(this)
-    val jsoresp = JsonObjectRequest(Request.Method.POST, apis, campos,
-        { response ->
-            try {
-                val obj = (response)
-                if (obj.getBoolean("estado")) {
-                    val array = obj.getJSONArray("data")
-                    for (i in 0 until array.length()) {
-                        val fila = array.getJSONObject(i)
-                        intrapersonal.add(fila.getString("placa_carro"))
-                        codigos_carros.add(fila.getString("cod_carro"))
-                    }
-                    val adapterList = ArrayAdapter(this, android.R.layout.simple_list_item_1, intrapersonal)
-                    listarCarros.adapter = adapterList
-                    adapterList.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(this, obj.getString("response"), Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: JSONException) {
-                Toast.makeText(this, "Error al procesar la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        },
-        { volleyError ->
-            Toast.makeText(this, "Error en la solicitud: ${volleyError.message}", Toast.LENGTH_LONG).show()
-        }
-    )
-
-    rq.add(jsoresp)
-}
-
-
     private fun editar(cod_carro:String){
         txtCodCarro.setText(cod_carro)
         val campos = JSONObject()
@@ -276,12 +262,24 @@ private fun todos() {
                     if(obj.getBoolean("estado")){
                         val array = obj.getJSONArray("data")
                         val dato = array.getJSONObject(0)
+                        val horaSalida = if (dato.isNull("hora_salida")) {
+                            "Sin hora de salida"
+                        } else {
+                            dato.getString("hora_salida")
+                        }
+
+                        val pago = if(dato.isNull("valor_pago")){
+                            "0"
+                        } else{
+                            dato.getString("valor_pago")
+                        }
+
                         txtCedula.setText(dato.getString("cedula_carro"))
                         txtNombre.setText(dato.getString("nombre_carro"))
                         txtPlaca.setText(dato.getString("placa_carro"))
                         txtEntrada.setText(dato.getString("hora_entrada"))
-                        txtSalida.setText(dato.getString("hora_salida"))
-                        txtValor.setText(dato.getString("valor_pago"))
+                        txtSalida.setText(horaSalida)
+                        txtValor.setText(pago)
                         todos()
                     }
                     else{
@@ -314,6 +312,7 @@ private fun todos() {
                     val obj=(s)
                     if (obj.getBoolean("estado")){
                         Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_SHORT).show()
+                        todos()
                     }
                     else{
                         Toast.makeText(applicationContext, obj.getString("response").toString(), Toast.LENGTH_SHORT).show()
